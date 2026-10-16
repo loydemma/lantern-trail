@@ -5,7 +5,8 @@ const baseURL = process.env.BASE_URL ?? 'http://localhost:4173'
 export default defineConfig({
   testDir: 'e2e',
   timeout: 60_000,
-  use: { baseURL },
+  // Real GPU (WebGPU via Metal) so the 3D scenes don't fall back to slow software rendering.
+  use: { baseURL, launchOptions: { args: ['--enable-unsafe-webgpu', '--use-angle=metal', '--enable-gpu'] } },
   webServer: process.env.BASE_URL
     ? undefined
     : { command: 'npm run build && npm run preview', url: baseURL, reuseExistingServer: true, timeout: 120_000 },

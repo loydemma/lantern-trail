@@ -32,7 +32,7 @@ export function createHallController(root: Document = document) {
     pre.textContent = SKILLS.map((s) => `${s.name}: ${s.description}`).join('\n')
     const p = document.createElement('p')
     p.className = 'skill-note'
-    p.textContent = 'In context now: only each skill’s name and description.'
+    p.textContent = 'Right now the agent only sees each skill’s name and description.'
     card.replaceChildren(p, pre)
     readout('context').textContent = `~${INDEX_WORDS} words`
     readout('loaded').textContent = '0 of 4'
@@ -53,7 +53,7 @@ export function createHallController(root: Document = document) {
     ].join('\n')
     const p = document.createElement('p')
     p.className = 'skill-note'
-    p.textContent = `Loaded ${s.name}/SKILL.md — the other chapters stay closed.`
+    p.textContent = `Opened ${s.name}/SKILL.md. The other chapters stay closed.`
     card.replaceChildren(p, pre)
     readout('context').textContent = `~${INDEX_WORDS + bodyWords(s)} words`
     readout('loaded').textContent = '1 of 4'

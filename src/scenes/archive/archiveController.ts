@@ -45,7 +45,7 @@ export function createArchiveController(root: Document = document) {
   const showGrounded = (ids: string[]) => {
     answer.textContent = current.grounded.answer
     answer.classList.remove('is-madeup')
-    tag.textContent = `Grounded · cites ${current.grounded.cites.join(', ')}`
+    tag.textContent = `Grounded · sources ${current.grounded.cites.join(', ')}`
     cites.replaceChildren(
       ...ids.map((id) => {
         const t = TABLETS.find((x) => x.id === id)!
@@ -75,7 +75,7 @@ export function createArchiveController(root: Document = document) {
       view?.clear()
       answer.textContent = current.madeUp
       answer.classList.add('is-madeup')
-      tag.textContent = 'No sources · confidently made up'
+      tag.textContent = 'No sources · made up'
       cites.replaceChildren()
       setReadouts(0, false)
       return

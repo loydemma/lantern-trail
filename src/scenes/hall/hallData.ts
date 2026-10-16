@@ -9,7 +9,7 @@ export const TOOLS: Record<ToolId, string> = {
   oilcan: 'Oil can',
   shears: 'Wick shears',
   chisel: 'Chisel',
-  clay: 'Clay pot',
+  clay: 'Paste pot',
   staff: 'Walking staff',
   rope: 'Rope',
 }
@@ -20,24 +20,24 @@ export const SKILLS: Skill[] = [
     title: 'Tending lanterns',
     description: 'Use at dusk when trail lanterns need lighting, refilling or trimming.',
     steps: [
-      'Check the oil; refill from the oil can if it is below a third.',
-      'Trim the wick to a finger’s width with the shears; replace it with ember-moss if frayed.',
+      'Check the oil. Refill it from the oil can if it’s below a third.',
+      'Trim the wick to a finger’s width with the shears. Replace it with ember-moss if it’s frayed.',
       'Light from the windward side and keep the shutter half-closed until the flame steadies.',
       'Note any cracked panes for the bridge keeper.',
     ],
     tools: ['oilcan', 'shears'],
   },
   {
-    name: 'mending-tablets',
-    title: 'Mending tablets',
-    description: 'Use when an archive tablet is cracked or its carving has worn faint.',
+    name: 'mending-scrolls',
+    title: 'Mending scrolls',
+    description: 'Use when an archive scroll is torn or its ink has faded.',
     steps: [
-      'Lay the tablet flat on cloth; never stand a cracked tablet back on the shelf.',
-      'Press fresh clay into the crack and smooth it level.',
-      'Re-cut worn letters with the chisel, following the original strokes.',
-      'Let it cure overnight before reshelving it under the same topic.',
+      'Lay the scroll flat on a clean cloth. Don’t roll a torn scroll back up.',
+      'Trim loose fibers along the tear with the shears.',
+      'Brush paste from the paste pot along the tear and press a thin patch over it from behind.',
+      'Let it dry overnight, then shelve it under the same topic.',
     ],
-    tools: ['clay', 'chisel'],
+    tools: ['shears', 'clay'],
   },
   {
     name: 'crossing-rivers',
@@ -46,7 +46,7 @@ export const SKILLS: Skill[] = [
     steps: [
       'Check the ferry timetable and the bridge keeper’s flood notice first.',
       'If fording, test each stone with the staff before stepping.',
-      'Shutter the lantern while crossing; open flames are not allowed aboard.',
+      'Close the lantern’s shutter while crossing. Open flames aren’t allowed on the ferry.',
       'Tie the pack to the rope so it can be pulled across if you slip.',
     ],
     tools: ['staff', 'rope'],
@@ -67,7 +67,7 @@ export type Task = { id: string; text: string; skill: string }
 
 export const TASKS: Task[] = [
   { id: 'dark', text: 'The trail lanterns are going dark at dusk.', skill: 'tending-lanterns' },
-  { id: 'crack', text: 'A ferry-timetable tablet has cracked.', skill: 'mending-tablets' },
+  { id: 'crack', text: 'A ferry-timetable scroll is torn.', skill: 'mending-scrolls' },
   { id: 'flood', text: 'Carry the oil across the river before the bridge floods.', skill: 'crossing-rivers' },
 ]
 

@@ -13,8 +13,8 @@ export const BEFORE_LANE: Step[] = [
   { kind: 'action', text: 'map("mill")', at: 'map', tool: 'map' },
   { kind: 'observation', text: 'The map marks a mill on the east bank.' },
   { kind: 'action', text: 'walk_to("east mill")', at: 'oldMill' },
-  { kind: 'observation', text: 'The east mill is boarded up — nobody has worked here in years.', mistake: true },
-  { kind: 'thought', text: 'That map is out of date. I should check a current source before walking anywhere else.' },
+  { kind: 'observation', text: 'The east mill is boarded up. Nobody has worked here in years.', mistake: true },
+  { kind: 'thought', text: 'That map is out of date. I should check a newer source before walking anywhere else.' },
   { kind: 'action', text: 'search("where does the miller live now?")', at: 'scout', tool: 'search' },
   { kind: 'observation', text: 'From the tower: the miller moved to the west cottage by the bridge last spring.' },
   { kind: 'thought', text: 'Will I make it before the ferry? Let me work out the time.' },
@@ -29,7 +29,7 @@ export const LANE_CLEAR: Step[] = [
 export const LANE_BLOCKED: Step[] = [
   { kind: 'action', text: 'walk_to("west cottage")' },
   { kind: 'observation', text: 'A fallen cart blocks the lane.' },
-  { kind: 'thought', text: 'Re-plan: is there another way round, and do I still have time?' },
+  { kind: 'thought', text: 'New plan needed. Is there another way around, and do I still have time?' },
   { kind: 'action', text: 'map("route to west cottage avoiding the lane")', at: 'map', tool: 'map' },
   { kind: 'observation', text: 'Take the riverside path: +10 minutes. Still 25 minutes to spare.' },
   { kind: 'action', text: 'walk_to("west cottage", via="riverside path")', at: 'detour' },
@@ -38,7 +38,7 @@ export const LANE_BLOCKED: Step[] = [
 
 export const FINISH: Step[] = [
   { kind: 'observation', text: 'The miller takes the oil and lights the lantern by the door.' },
-  { kind: 'done', text: 'Goal met — stopping. 3 tools used, 1 wrong turn corrected.' },
+  { kind: 'done', text: 'Goal done, so the agent stops. 3 tools used, 1 wrong turn fixed.' },
 ]
 
 export function buildRun(blocked: boolean): Step[] {

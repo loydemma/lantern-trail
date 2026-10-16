@@ -1,5 +1,5 @@
 import {
-  BoxGeometry, CylinderGeometry, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, SphereGeometry, TorusGeometry, Vector3,
+  BoxGeometry, CylinderGeometry, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Vector3,
 } from 'three/webgpu'
 import { createIslandStage } from '../../engine/islandStage'
 import type { Quality } from '../../engine/quality'
@@ -12,52 +12,16 @@ import { createLabel } from '../../world/label'
 import { createGrassTufts } from '../../world/grass'
 import { loadWarrior } from '../../world/warrior'
 import { mulberry32 } from '../../world/rand'
+import { createTool } from '../../world/tools'
 
 const W = 6.2
 const D = 4.2
 const mat = (color: string, extra: Partial<MeshStandardMaterial> = {}) =>
   Object.assign(new MeshStandardMaterial({ color, roughness: 0.85 }), extra)
 
-function toolMesh(id: ToolId): Group {
-  const g = new Group()
-  const metal = mat('#8d8a96', { metalness: 0.4, roughness: 0.5 })
-  const wood = mat('#6b4f3a')
-  if (id === 'oilcan') {
-    const body = new Mesh(new CylinderGeometry(0.1, 0.12, 0.2, 12), metal)
-    const spout = new Mesh(new CylinderGeometry(0.012, 0.02, 0.18, 6), metal)
-    spout.position.set(0.1, 0.08, 0)
-    spout.rotation.z = -0.9
-    g.add(body, spout)
-  } else if (id === 'shears') {
-    for (const r of [0.35, -0.35]) {
-      const blade = new Mesh(new BoxGeometry(0.03, 0.3, 0.01), metal)
-      blade.rotation.z = r
-      g.add(blade)
-    }
-  } else if (id === 'chisel') {
-    const handle = new Mesh(new CylinderGeometry(0.025, 0.025, 0.14, 8), wood)
-    handle.position.y = 0.08
-    const blade = new Mesh(new BoxGeometry(0.04, 0.14, 0.012), metal)
-    blade.position.y = -0.06
-    g.add(handle, blade)
-  } else if (id === 'clay') {
-    const pot = new Mesh(new SphereGeometry(0.12, 12, 10), mat('#a8674a'))
-    pot.scale.y = 0.85
-    g.add(pot)
-  } else if (id === 'staff') {
-    const staff = new Mesh(new CylinderGeometry(0.02, 0.025, 0.95, 8), wood)
-    g.add(staff)
-  } else {
-    const rope = new Mesh(new TorusGeometry(0.11, 0.025, 6, 16), mat('#b59a6a'))
-    g.add(rope)
-  }
-  g.traverse((o) => { (o as Mesh).castShadow = true })
-  return g
-}
-
 export async function createHallScene(canvas: HTMLCanvasElement, q: Quality): Promise<SceneHandle & HallView> {
   const stage = await createIslandStage(canvas, q, {
-    width: W, depth: D, camera: new Vector3(0.6, 4.4, 7.4), lookAt: new Vector3(0, 0.55, -0.2), posts: [[-2.8, 1.7], [2.8, 1.7]],
+    width: W, depth: D, camera: new Vector3(0.5, 4.6, 8.0), lookAt: new Vector3(0, 0.8, -0.2), posts: [[-2.8, 1.7], [2.8, 1.7]],
   })
   const { scene, camera } = stage
 
@@ -85,17 +49,19 @@ export async function createHallScene(canvas: HTMLCanvasElement, q: Quality): Pr
   const tools = new Map<ToolId, { group: Group; halo: MeshBasicMaterial; pos: Vector3 }>()
   const labels: Mesh[] = []
   toolIds.forEach((id, i) => {
-    const x = -1.9 + i * 0.76
-    const group = toolMesh(id)
-    group.position.set(x, id === 'staff' ? 0.75 : 1.02, -1.72)
+    const x = -2.05 + i * 0.82
+    const group = createTool(id)
+    group.scale.setScalar(1.6)
+    group.position.set(x, id === 'staff' ? 0.86 : 1.0, -1.7)
     scene.add(group)
     const halo = new MeshBasicMaterial({ color: '#ffcf7a', transparent: true, opacity: 0, depthWrite: false })
-    const disc = new Mesh(new CylinderGeometry(0.26, 0.26, 0.01, 24), halo)
+    const disc = new Mesh(new CylinderGeometry(0.36, 0.36, 0.01, 24), halo)
     disc.rotation.x = Math.PI / 2
     disc.position.set(x, 1.0, -1.785)
     scene.add(disc)
-    const label = createLabel(TOOLS[id], '', 0.72)
-    label.position.set(x, 1.42, -1.6)
+    // Alternate label heights so wide names never collide.
+    const label = createLabel(TOOLS[id], '', 0.95)
+    label.position.set(x, i % 2 ? 1.78 : 1.52, -1.55)
     scene.add(label)
     labels.push(label)
     tools.set(id, { group, halo, pos: new Vector3(x, 0.08, -1.1) })
@@ -126,8 +92,8 @@ export async function createHallScene(canvas: HTMLCanvasElement, q: Quality): Pr
   // Chapter titles float above the book — the only part the agent sees until it picks one.
   const chapters = SKILLS.map((s, i) => {
     // One row above the wall, clear of the tool labels.
-    const l = createLabel(s.title, `ch. ${i + 1}`, 1.0)
-    l.position.set(0.3 + (i - 1.5) * 1.12, 2.6, 0.6)
+    const l = createLabel(s.title, `ch. ${i + 1}`, 1.15)
+    l.position.set(0.05 + (i - 1.5) * 1.22, 2.75, 0.6)
     scene.add(l)
     labels.push(l)
     return l

@@ -1,4 +1,4 @@
-// Pre-written knowledge base for the Archive (RAG) chapter. Each tablet is one chunk of a
+// Pre-written knowledge base for the Archive (RAG) chapter. Each scroll is one chunk of a
 // longer valley document. Relevance scores stand in for embedding similarity and are
 // hand-authored per question. Nothing here calls a live model.
 
@@ -53,7 +53,7 @@ export const QUESTIONS: Question[] = [
     text: 'When does the night ferry leave?',
     scores: { F2: 0.94, F3: 0.88, F1: 0.71, F4: 0.62, F6: 0.55, F5: 0.41, L5: 0.33, B3: 0.3 },
     grounded: {
-      answer: 'The night ferry leaves the east dock at the ninth bell, once a night — but on festival nights it runs every hour until the lanterns are out.',
+      answer: 'The night ferry leaves the east dock at the ninth bell, once a night. On festival nights, it runs every hour until the lanterns are out.',
       cites: ['F2', 'F3'],
     },
     madeUp: 'The night ferry leaves the west dock at midnight, every night of the year.',
@@ -63,7 +63,7 @@ export const QUESTIONS: Question[] = [
     text: 'What does it cost to cross the stone bridge?',
     scores: { B1: 0.93, B2: 0.91, B5: 0.58, B4: 0.47, B3: 0.44, B6: 0.36, L6: 0.31, H5: 0.29 },
     grounded: {
-      answer: 'Nothing on foot — travelers cross freely at any hour. Carts and wagons pay the keeper two copper.',
+      answer: 'It’s free on foot, at any hour. Carts and wagons pay the bridge keeper two copper.',
       cites: ['B1', 'B2'],
     },
     madeUp: 'Every traveler pays three silver coins to cross, collected at the south end.',
@@ -73,10 +73,10 @@ export const QUESTIONS: Question[] = [
     text: 'Which herb makes a lantern burn longer?',
     scores: { H1: 0.95, L4: 0.82, H2: 0.74, H5: 0.6, H4: 0.43, H3: 0.35, B4: 0.33, L6: 0.3 },
     grounded: {
-      answer: 'Ember-moss: dried and pressed into the wick, it makes a lantern burn about half again as long. It’s the traditional festival wick, too.',
+      answer: 'Ember-moss. Dried and pressed into the wick, it makes a lantern burn about half again as long. It’s also the traditional wick for festival lanterns.',
       cites: ['H1', 'L4'],
     },
-    madeUp: 'Lavender oil — a few drops in the reservoir doubles a lantern’s burn time.',
+    madeUp: 'Lavender oil. A few drops in the oil double how long a lantern burns.',
   },
 ]
 

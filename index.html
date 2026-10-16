@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Lantern Trail</title>
-  <meta name="description" content="A field guide to how AI works — LLMs, RAG, agents and skills, explained through interactive 3D scenes." />
+  <meta name="description" content="A field guide to how AI works: LLMs, RAG, agents and skills, explained with interactive 3D scenes." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -14,6 +14,7 @@
 <body>
   <header class="hero" id="hero">
     <canvas id="hero-canvas" class="scene-canvas" aria-label="A lantern-lit valley at dusk. A small traveler stands on the trail and turns to follow your pointer."></canvas>
+    <div class="hero-scrim" aria-hidden="true"></div>
 
     <div class="masthead">
       <p class="eyebrow">A field guide to how AI works</p>
@@ -41,8 +42,7 @@
       <div class="chapter-text">
         <p class="eyebrow">01 · LLM</p>
         <h2 class="display" id="river-title">It predicts<br />the next piece.</h2>
-        <p>A large language model writes one small piece of text at a time. At every step it weighs
-          the pieces that could come next, picks one, and then weighs again — now knowing what it just wrote.</p>
+        <p>A large language model writes text one small piece at a time. At each step it scores every piece that could come next, picks one, and adds it to the text. Then it does the same thing again with the longer text.</p>
         <p>Here, each stone is a possible next piece. Bigger stones are more likely. Thicken the mist to
           make the choices more even, and the path more surprising.</p>
 
@@ -78,26 +78,16 @@
         <summary>Under the hood</summary>
         <div class="uth-body">
           <h3>Tokens, not words</h3>
-          <p>Models read and write <strong>tokens</strong> — chunks of text that are often a whole word, sometimes
-            part of one ("un" + "locked"), sometimes punctuation. A typical model has a vocabulary of tens of
-            thousands of tokens.</p>
+          <p>Models read and write <strong>tokens</strong>. A token is a chunk of text: often a whole word, sometimes part of a word ("un" + "locked"), sometimes punctuation. A typical model knows tens of thousands of different tokens.</p>
           <h3>A probability for every token</h3>
-          <p>At each step the network outputs a score (a <strong>logit</strong>) for every token in its vocabulary.
-            A <strong>softmax</strong> turns those scores into probabilities that add up to 1. The stones show the
-            top few; their footprint area is proportional to probability.</p>
-          <h3>Temperature reshapes, then we sample</h3>
-          <p>Before the softmax, each logit is divided by the <strong>temperature</strong> <em>T</em>:
-            <code>p<sub>i</sub> = exp(z<sub>i</sub>/T) / Σ exp(z<sub>j</sub>/T)</code>. Low <em>T</em> sharpens the
-            distribution toward the favourite; high <em>T</em> flattens it. Then one token is <strong>sampled</strong>
-            from that distribution. Temperature doesn't "pick a surprising word" — it changes the odds.</p>
+          <p>At each step the model gives every token a score, called a <strong>logit</strong>. A function called <strong>softmax</strong> turns those scores into probabilities that add up to 1. The stones show the top few choices, and each stone's area matches its probability.</p>
+          <h3>Temperature changes the odds</h3>
+          <p>Before the softmax, each score is divided by the <strong>temperature</strong> <em>T</em>:
+            <code>p<sub>i</sub> = exp(z<sub>i</sub>/T) / Σ exp(z<sub>j</sub>/T)</code>. A low <em>T</em> makes the favorite even more likely. A high <em>T</em> evens the odds out. Then the model picks one token at random, weighted by those odds. This is called <strong>sampling</strong>. A high temperature doesn't choose strange words on purpose. It just gives unlikely words a better chance.</p>
           <h3>One token at a time</h3>
-          <p>Generation is <strong>autoregressive</strong>: the chosen token is appended to the input and the whole
-            prediction runs again. That's why every step brings a fresh set of stones — the odds depend on
-            everything written so far.</p>
+          <p>This is called <strong>autoregressive</strong> generation. The chosen token is added to the text, and the model runs again on the whole thing. That's why each step brings a new set of stones: the odds depend on everything written so far.</p>
           <h3>Frozen knowledge</h3>
-          <p>Everything the model "knows" was compressed into its weights during training, up to a
-            <strong>training cutoff</strong>. It can't look anything up on its own — which is the problem the next
-            stop solves. (The words in this scene are pre-written to illustrate the mechanism; no live model is called.)</p>
+          <p>Everything the model knows was learned during training, up to a date called the <strong>training cutoff</strong>. On its own, it can't look anything up. The next stop shows how to fix that. (The words in this scene are written by hand to show how this works. No real model is running.)</p>
         </div>
       </details>
     </section>
@@ -106,11 +96,8 @@
       <div class="chapter-text">
         <p class="eyebrow">02 · RAG</p>
         <h2 class="display" id="archive-title">It can look<br />things up.</h2>
-        <p class="ladder">The river showed the limit: a model only knows what it saw in training. Ask it about
-          something it never read, and it will still answer — confidently.</p>
-        <p><strong>Retrieval-augmented generation</strong> fixes that by handing the model your documents. First it
-          <em>retrieves</em> the few passages closest in meaning to the question, then it <em>generates</em> an answer
-          from them, and can point to its sources.</p>
+        <p class="ladder">A model only knows what it saw in training. If you ask about something it never read, it usually answers anyway, and it can sound sure even when it's wrong.</p>
+        <p><strong>Retrieval-augmented generation</strong> (RAG) helps by giving the model your own documents. First it <em>retrieves</em> the few passages that best match the question. Then it <em>generates</em> an answer from those passages and shows which ones it used.</p>
         <p>Pick a question, then try it with RAG switched off and on.</p>
 
         <div class="answer-card chapter-output">
@@ -122,7 +109,7 @@
       </div>
 
       <div class="chapter-stage">
-        <canvas id="archive-canvas" class="scene-canvas island-canvas" aria-label="An open-air archive on a floating island. Shelves of carved tablets glow by relevance and the closest ones fly to a reading tray."></canvas>
+        <canvas id="archive-canvas" class="scene-canvas island-canvas" aria-label="An open-air archive on a floating island. Shelves of open scrolls glow by relevance, and the closest matches fly to a reading tray."></canvas>
         <aside class="panel panel-below" aria-label="Archive controls">
           <p class="panel-title">The question</p>
           <div class="choices" id="archive-questions" role="radiogroup" aria-label="Question"></div>
@@ -140,22 +127,15 @@
         <summary>Under the hood</summary>
         <div class="uth-body">
           <h3>Chunking</h3>
-          <p>Documents are split into <strong>chunks</strong> — a few sentences each, like the tablets here — so the
-            model can be given just the relevant pieces rather than whole books.</p>
+          <p>Documents are split into short pieces called <strong>chunks</strong>, a few sentences each, like the scrolls here. That way the model gets only the parts that matter, not whole books.</p>
           <h3>Embeddings and similarity</h3>
-          <p>Each chunk is turned into an <strong>embedding</strong>: a long list of numbers that places it in a
-            "meaning space". The question is embedded the same way, and a <strong>vector search</strong> finds the chunks
-            nearest to it (often by cosine similarity). The tablet glow stands in for that score.</p>
+          <p>Each chunk is turned into an <strong>embedding</strong>: a long list of numbers that captures what it means. Chunks with similar meanings get similar numbers. The question gets an embedding too, and a <strong>vector search</strong> finds the chunks closest to it, often using cosine similarity. Here, the glow on each scroll shows that closeness score.</p>
           <h3>Top-k and the context window</h3>
-          <p>Only the <strong>top-k</strong> chunks are kept, because the model's <strong>context window</strong> is
-            finite and irrelevant text dilutes the answer. Here k = 3: the tray only has three slots.</p>
+          <p>Only the best few matches are kept, called the <strong>top-k</strong>. The model can only read so much at once (its <strong>context window</strong>), and extra text that doesn't help makes answers worse. Here k = 3, so the tray has three slots.</p>
           <h3>Grounding vs. hallucination</h3>
-          <p>With RAG off, the model still produces fluent text — it just isn't tied to anything true. That's a
-            <strong>hallucination</strong>. With RAG on, the answer is <strong>grounded</strong> in retrieved text and
-            can cite it, so a person can check. Retrieval can still miss; good systems measure that too.</p>
+          <p>With RAG off, the model still writes a smooth answer, but nothing backs it up. A confident answer that isn't true is called a <strong>hallucination</strong>. With RAG on, the answer is <strong>grounded</strong>: it comes from real text and lists its sources, so you can check it. Retrieval can still pull the wrong chunks, so good systems test for that too.</p>
           <h3>Pre-written</h3>
-          <p>The documents, scores and answers in this scene are hand-written to illustrate the mechanism; no live model
-            or vector database is called.</p>
+          <p>The documents, scores and answers in this scene are written by hand to show how RAG works. No real model or database is running.</p>
         </div>
       </details>
     </section>
@@ -164,11 +144,9 @@
       <div class="chapter-text">
         <p class="eyebrow">03 · Agent</p>
         <h2 class="display" id="village-title">It can act.</h2>
-        <p class="ladder">Looking things up still means waiting to be asked. An <strong>agent</strong> is given a goal
-          and works toward it on its own.</p>
-        <p>Under the hood it's a loop: the model <em>thinks</em> about what to do next, <em>calls a tool</em>, reads the
-          <em>result</em>, and decides again — until the goal is met. Every step is just text going back and forth.</p>
-        <p>Step through the quest. It will make one honest mistake. Block the lane before it sets off and watch it re-plan.</p>
+        <p class="ladder">So far the model only answers when asked. An <strong>agent</strong> is given a goal and works toward it on its own.</p>
+        <p>It works in a loop. The model <em>decides</em> what to do next, <em>uses a tool</em>, reads the <em>result</em>, and decides again. It keeps going until the goal is done. Each step is written out as plain text, so you can follow along.</p>
+        <p>Step through the quest below. The agent makes one mistake along the way and fixes it. To see it change plans, block the lane before it heads to the cottage.</p>
 
         <div class="chapter-output">
           <p class="sentence-label">The agent's log</p>
@@ -197,19 +175,13 @@
         <summary>Under the hood</summary>
         <div class="uth-body">
           <h3>LLM + tools + loop + goal</h3>
-          <p>An agent is a language model given a <strong>goal</strong>, a set of <strong>tools</strong> it may call
-            (search, a calculator, a map), and a <strong>loop</strong> that keeps running it. Each tool is described to the
-            model by name, purpose and inputs.</p>
+          <p>An agent is a language model with three extra things: a <strong>goal</strong>, a set of <strong>tools</strong> it can use (here: search, a calculator and a map), and a <strong>loop</strong> that keeps it running. The model is told each tool's name, what it does and what input it needs.</p>
           <h3>Tool calls are text</h3>
-          <p>The model doesn't run anything itself. It writes a structured <strong>tool call</strong> like
-            <code>search("…")</code>; the surrounding program runs the tool and feeds the <strong>observation</strong> back
-            as more text. Then the model reasons again with that new information.</p>
+          <p>The model doesn't run anything itself. It writes a request, called a <strong>tool call</strong>, like <code>search("…")</code>. The program around it runs the tool and sends the result back as text. Then the model thinks again with the new information.</p>
           <h3>Stop conditions</h3>
-          <p>The loop ends when the model decides the goal is met — or when a guard stops it: a step limit, a budget,
-            or a human check-in. Without them, agents can loop forever.</p>
+          <p>The loop ends when the model decides the goal is done. Most systems also add limits, like a maximum number of steps, a spending cap, or a person who checks in. Without limits, an agent can keep going forever.</p>
           <h3>Failure modes</h3>
-          <p>Agents pick the wrong tool, trust a stale source (the old map), or wander. Good agents notice
-            contradictions and correct course; good systems log every step so people can see why it did what it did.</p>
+          <p>Agents can pick the wrong tool, trust out-of-date information (like the old map), or go in circles. A good agent notices when something doesn't add up and changes course. A good system records every step so people can see why the agent did what it did.</p>
         </div>
       </details>
     </section>
@@ -218,10 +190,8 @@
       <div class="chapter-text">
         <p class="eyebrow">04 · Skill</p>
         <h2 class="display" id="hall-title">It has<br />know-how.</h2>
-        <p class="ladder">An agent with tools can act, but not necessarily act <em>well</em>. Knowing which tool exists
-          isn't the same as knowing how to do the job.</p>
-        <p>A <strong>skill</strong> is written know-how: a short instruction file for doing one kind of task well. The
-          agent keeps only the titles in mind, and opens the one chapter a task needs — so it stays focused.</p>
+        <p class="ladder">Having tools doesn't mean an agent knows how to use them well for a specific job.</p>
+        <p>A <strong>skill</strong> is a short set of written instructions for one kind of task. The agent only keeps the titles in mind. When a task comes in, it opens the one chapter it needs and follows it.</p>
         <p>Give the traveler a task and watch which chapter it opens, and which tools that chapter calls for.</p>
 
         <div class="chapter-output">
@@ -248,19 +218,13 @@
         <summary>Under the hood</summary>
         <div class="uth-body">
           <h3>Agent Skills</h3>
-          <p>In Claude's <strong>Agent Skills</strong>, a skill is a folder with a <code>SKILL.md</code> file: a short
-            header (<code>name</code>, <code>description</code>) and a body of instructions, plus optional scripts or
-            reference files.</p>
+          <p>In Claude's <strong>Agent Skills</strong>, a skill is a folder with a <code>SKILL.md</code> file. The file starts with a short header (a <code>name</code> and a <code>description</code>), followed by the instructions. The folder can also hold scripts or reference files.</p>
           <h3>Progressive disclosure</h3>
-          <p>Only each skill's name and description sit in the model's context up front — a few words each. When a task
-            matches, the agent loads that one skill's full body. That keeps the context small even with many skills installed.</p>
+          <p>At first, the model only sees each skill's name and description, which is just a few words each. When a task matches one, the agent loads that skill's full instructions. This keeps the model's context small, even with many skills installed.</p>
           <h3>Skills vs. tools</h3>
-          <p>A <strong>tool</strong> is something the agent can <em>do</em> (call a calculator, run a search). A
-            <strong>skill</strong> is <em>how</em> to do a task well — and often says which tools to use, in what order.</p>
+          <p>A <strong>tool</strong> is an action the agent can take, like using a calculator or running a search. A <strong>skill</strong> explains how to do a task well, and often says which tools to use and in what order.</p>
           <h3>Skills vs. RAG</h3>
-          <p>RAG retrieves <strong>knowledge</strong> automatically, by similarity to the question. A skill is
-            <strong>know-how</strong> the agent chooses deliberately, by reading the descriptions. Both are just text
-            added to the context — the difference is what it's for and who picks it.</p>
+          <p>RAG finds <strong>facts</strong> automatically, based on how closely they match the question. A skill is a <strong>how-to guide</strong>, and the agent picks it on purpose after reading the descriptions. Both end up as text the model reads. They differ in what they hold and in how they're chosen.</p>
         </div>
       </details>
     </section>
