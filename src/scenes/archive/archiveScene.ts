@@ -1,4 +1,4 @@
-import { BoxGeometry, Color, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three/webgpu'
+import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three/webgpu'
 import { createIslandStage } from '../../engine/islandStage'
 import type { Quality } from '../../engine/quality'
 import type { SceneHandle } from '../../engine/sceneHost'
@@ -11,6 +11,7 @@ import { createRocks } from '../../world/props'
 import { createGrassTufts } from '../../world/grass'
 import { loadWarrior } from '../../world/warrior'
 import { mulberry32 } from '../../world/rand'
+import { createScroll } from '../../world/scroll'
 
 const W = 6.2
 const D = 4.2
@@ -18,7 +19,7 @@ const TOPICS: Topic[] = ['ferry', 'bridge', 'herbs', 'festival']
 const TOPIC_NAMES: Record<Topic, string> = { ferry: 'Ferry', bridge: 'Bridge', herbs: 'Herbs', festival: 'Festival' }
 const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
 
-type T = { mesh: Mesh; mat: MeshStandardMaterial; home: Vector3; homeRot: number; glow: number; target: number; flight: null | { from: Vector3; to: Vector3; t: number; delay: number; back: boolean } }
+type T = { mesh: Group; glowMats: MeshStandardMaterial[]; home: Vector3; homeRot: number; glow: number; target: number; flight: null | { from: Vector3; to: Vector3; t: number; delay: number; back: boolean } }
 
 export async function createArchiveScene(canvas: HTMLCanvasElement, q: Quality): Promise<SceneHandle & ArchiveView> {
   const stage = await createIslandStage(canvas, q, {
@@ -67,15 +68,13 @@ export async function createArchiveScene(canvas: HTMLCanvasElement, q: Quality):
 
     TABLETS.filter((t) => t.topic === topic).forEach((t, i) => {
       const shelf = Math.floor(i / 2)
-      const local = new Vector3(i % 2 ? 0.22 : -0.22, 0.27 + shelf * 0.48, 0.02)
-      const mat = new MeshStandardMaterial({ color: '#e6dccb', roughness: 0.8, emissive: new Color(TOPIC_COLORS[topic]), emissiveIntensity: 0 })
-      const mesh = new Mesh(new BoxGeometry(0.3, 0.36, 0.06), mat)
-      mesh.castShadow = true
+      const local = new Vector3(i % 2 ? 0.23 : -0.23, 0.33 + shelf * 0.48, 0.02)
+      const scroll = createScroll(TOPIC_COLORS[topic])
       const home = local.applyMatrix4(rack.matrixWorld)
-      mesh.position.copy(home)
-      mesh.rotation.y = -angle
-      scene.add(mesh)
-      tablets.set(t.id, { mesh, mat, home, homeRot: -angle, glow: 0, target: 0, flight: null })
+      scroll.group.position.copy(home)
+      scroll.group.rotation.y = -angle
+      scene.add(scroll.group)
+      tablets.set(t.id, { mesh: scroll.group, glowMats: scroll.glow, home, homeRot: -angle, glow: 0, target: 0, flight: null })
     })
   })
 
@@ -92,7 +91,7 @@ export async function createArchiveScene(canvas: HTMLCanvasElement, q: Quality):
   const tray = new Mesh(new BoxGeometry(1.6, 0.04, 0.55), new MeshStandardMaterial({ color: '#3d3a6b', roughness: 0.6 }))
   tray.position.set(0.2, 0.68, 0.95)
   scene.add(tray)
-  const slots = Array.from({ length: CONTEXT_SLOTS }, (_, i) => new Vector3(-0.32 + i * 0.52, 0.72, 0.95))
+  const slots = Array.from({ length: CONTEXT_SLOTS }, (_, i) => new Vector3(-0.32 + i * 0.52, 0.73, 0.95))
   const trayLabel = createLabel('Context', `${CONTEXT_SLOTS} slots`, 0.7)
   trayLabel.position.set(0.2, 1.12, 1.25)
   scene.add(trayLabel)
@@ -126,7 +125,7 @@ export async function createArchiveScene(canvas: HTMLCanvasElement, q: Quality):
     clock += dt
     for (const t of tablets.values()) {
       t.glow += (t.target - t.glow) * (1 - Math.exp(-6 * dt))
-      t.mat.emissiveIntensity = t.glow
+      t.glowMats.forEach((m, i) => (m.emissiveIntensity = t.glow * (i === 0 ? 0.3 : 1.2)))
       const f = t.flight
       if (!f) continue
       if (f.delay > 0) { f.delay -= dt; continue }
