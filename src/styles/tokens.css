@@ -1,0 +1,26 @@
+:root {
+  /* Page (cream editorial) */
+  --cream: #f3ece0;
+  --cream-deep: #e9dfcd;
+  --ink: #2b2233;
+  --ink-soft: #5d5262;
+  --rule: #d8ccb8;
+
+  /* Dusk scene */
+  --sky-top: #2b2245;
+  --sky-mid: #5b3f6b;
+  --sky-horizon: #e6a07a;
+  --lantern: #ffcf7a;
+  --lantern-glow: #ffb347;
+  --indigo: #3d3a6b;
+
+  /* Glass panel */
+  --glass: rgba(250, 246, 238, 0.82);
+  --glass-edge: rgba(43, 34, 51, 0.08);
+
+  --font-display: 'Instrument Serif', 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius: 14px;
+  --gutter: clamp(16px, 4vw, 48px);
+}

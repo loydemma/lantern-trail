@@ -1,0 +1,4 @@
+warrior.glb = Rogue_Hooded.glb from "KayKit : Adventurers Character Pack (1.0)"
+Created/distributed by Kay Lousberg (www.kaylousberg.com)
+Source: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0
+License: Creative Commons Zero (CC0) http://creativecommons.org/publicdomain/zero/1.0/

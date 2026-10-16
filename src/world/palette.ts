@@ -1,0 +1,30 @@
+import { Color } from 'three/webgpu'
+
+// Mirrors src/styles/tokens.css.
+export const PALETTE = {
+  skyTop: new Color('#2b2245'),
+  skyMid: new Color('#5b3f6b'),
+  skyHorizon: new Color('#e6a07a'),
+  hillNear: new Color('#2a2238'),
+  hillMid: new Color('#3e3352'),
+  hillFar: new Color('#6a5577'),
+  fog: new Color('#7d6a88'),
+  lantern: new Color('#ffcf7a'),
+  lanternGlow: new Color('#ffb347'),
+  window: new Color('#ffc46b'),
+  grass: new Color('#4c5d4a'),
+  grassDusk: new Color('#3b4a44'),
+  path: new Color('#9a7f66'),
+  stoneWet: new Color('#6f6a72'),
+  stoneTop: new Color('#a59a92'),
+  water: new Color('#9aa6c8'),
+  cream: new Color('#f3ece0'),
+  strataEarth: new Color('#6b4f3a'),
+  strataClay: new Color('#8d6a4c'),
+  strataSand: new Color('#c9ab84'),
+  bedrock: new Color('#4a3a33'),
+  wood: new Color('#5a4030'),
+  roof: new Color('#4d3a4f'),
+  wall: new Color('#d9c6a8'),
+  indigo: new Color('#3d3a6b'),
+}
