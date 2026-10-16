@@ -1,6 +1,6 @@
 import {
   CanvasTexture, CylinderGeometry, DirectionalLight, Group, HemisphereLight, Mesh, MeshBasicMaterial, MeshStandardMaterial,
-  PlaneGeometry, SRGBColorSpace, Vector3, DoubleSide,
+  PlaneGeometry, Vector3, DoubleSide,
 } from 'three/webgpu'
 import { createStage } from '../../engine/stage'
 import type { Quality } from '../../engine/quality'
@@ -14,6 +14,7 @@ import { createRocks } from '../../world/props'
 import { createGrassTufts, createPebbles } from '../../world/grass'
 import { loadWarrior } from '../../world/warrior'
 import { mulberry32 } from '../../world/rand'
+import { labelTexture } from '../../world/label'
 
 const W = 6.4
 const D = 4.2
@@ -25,26 +26,6 @@ const stoneRadius = (p: number) => 0.12 + 0.36 * Math.sqrt(p) // footprint area 
 const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
 
 type Stone = { mesh: Group; top: Mesh; label: Mesh; r: number; targetR: number; y: number; targetY: number; z: number; glow: number }
-
-function labelTexture(text: string, sub: string): CanvasTexture {
-  const c = document.createElement('canvas')
-  c.width = 512
-  c.height = 256
-  const g = c.getContext('2d')!
-  g.textAlign = 'center'
-  g.fillStyle = '#2b2233'
-  g.font = 'italic 112px "Instrument Serif", Georgia, serif'
-  g.fillText(text, 256, 140)
-  if (sub) {
-    g.font = '600 44px Inter, system-ui, sans-serif'
-    g.fillStyle = '#6b5f70'
-    g.fillText(sub, 256, 214)
-  }
-  const t = new CanvasTexture(c)
-  t.colorSpace = SRGBColorSpace
-  t.anisotropy = 4
-  return t
-}
 
 function stoneGeometry(seed: number): CylinderGeometry {
   const geo = new CylinderGeometry(1, 1.08, 0.22, 18, 2)

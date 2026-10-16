@@ -26,11 +26,11 @@
     <nav class="trail" aria-label="Trail progress">
       <a class="trail-stop is-current" href="#river"><span class="dot"></span>River</a>
       <span class="trail-line"></span>
-      <span class="trail-stop is-soon" title="Coming soon"><span class="dot"></span>Archive</span>
+      <a class="trail-stop" href="#archive"><span class="dot"></span>Archive</a>
       <span class="trail-line"></span>
-      <span class="trail-stop is-soon" title="Coming soon"><span class="dot"></span>Village</span>
+      <a class="trail-stop" href="#village"><span class="dot"></span>Village</a>
       <span class="trail-line"></span>
-      <span class="trail-stop is-soon" title="Coming soon"><span class="dot"></span>Hall</span>
+      <a class="trail-stop" href="#hall"><span class="dot"></span>Hall</a>
     </nav>
 
     <a class="scroll-cue" href="#river">Begin the trail <span aria-hidden="true">↓</span></a>
@@ -100,11 +100,165 @@
       </details>
     </section>
 
-    <section class="coming-soon" aria-label="Coming soon">
-      <p class="eyebrow">Next on the trail</p>
-      <p class="display small">The Archive · The Village · The Hall</p>
-      <p>Looking things up, taking action, and learning know-how. Coming soon.</p>
+    <section class="chapter chapter-flip" id="archive" aria-labelledby="archive-title">
+      <div class="chapter-text">
+        <p class="eyebrow">02 · RAG</p>
+        <h2 class="display" id="archive-title">It can look<br />things up.</h2>
+        <p class="ladder">The river showed the limit: a model only knows what it saw in training. Ask it about
+          something it never read, and it will still answer — confidently.</p>
+        <p><strong>Retrieval-augmented generation</strong> fixes that by handing the model your documents. First it
+          <em>retrieves</em> the few passages closest in meaning to the question, then it <em>generates</em> an answer
+          from them, and can point to its sources.</p>
+        <p>Pick a question, then try it with RAG switched off and on.</p>
+
+        <div class="answer-card">
+          <p class="sentence-label">The archive answers</p>
+          <p class="answer" id="archive-answer" aria-live="polite"></p>
+          <p class="answer-tag" id="archive-tag"></p>
+          <ol class="cites" id="archive-cites" aria-label="Retrieved passages"></ol>
+        </div>
+      </div>
+
+      <div class="chapter-stage">
+        <canvas id="archive-canvas" class="scene-canvas island-canvas" aria-label="An open-air archive on a floating island. Shelves of carved tablets glow by relevance and the closest ones fly to a reading tray."></canvas>
+        <aside class="panel panel-below" aria-label="Archive controls">
+          <p class="panel-title">The question</p>
+          <div class="choices" id="archive-questions" role="radiogroup" aria-label="Question"></div>
+          <label class="toggle"><input type="checkbox" id="archive-rag" checked /><span>RAG <em>(look it up first)</em></span></label>
+          <div class="panel-row"><button class="btn btn-primary" id="archive-ask" type="button">Ask the archive</button></div>
+          <dl class="readouts" id="archive-readouts">
+            <div><dt>Retrieved</dt><dd data-readout="retrieved">0</dd></div>
+            <div><dt>Context</dt><dd data-readout="slots">0 / 3</dd></div>
+            <div><dt>Grounded</dt><dd data-readout="grounded">—</dd></div>
+          </dl>
+        </aside>
+      </div>
+
+      <details class="under-the-hood">
+        <summary>Under the hood</summary>
+        <div class="uth-body">
+          <h3>Chunking</h3>
+          <p>Documents are split into <strong>chunks</strong> — a few sentences each, like the tablets here — so the
+            model can be given just the relevant pieces rather than whole books.</p>
+          <h3>Embeddings and similarity</h3>
+          <p>Each chunk is turned into an <strong>embedding</strong>: a long list of numbers that places it in a
+            "meaning space". The question is embedded the same way, and a <strong>vector search</strong> finds the chunks
+            nearest to it (often by cosine similarity). The tablet glow stands in for that score.</p>
+          <h3>Top-k and the context window</h3>
+          <p>Only the <strong>top-k</strong> chunks are kept, because the model's <strong>context window</strong> is
+            finite and irrelevant text dilutes the answer. Here k = 3: the tray only has three slots.</p>
+          <h3>Grounding vs. hallucination</h3>
+          <p>With RAG off, the model still produces fluent text — it just isn't tied to anything true. That's a
+            <strong>hallucination</strong>. With RAG on, the answer is <strong>grounded</strong> in retrieved text and
+            can cite it, so a person can check. Retrieval can still miss; good systems measure that too.</p>
+          <h3>Pre-written</h3>
+          <p>The documents, scores and answers in this scene are hand-written to illustrate the mechanism; no live model
+            or vector database is called.</p>
+        </div>
+      </details>
     </section>
+
+    <section class="chapter" id="village" aria-labelledby="village-title">
+      <div class="chapter-text">
+        <p class="eyebrow">03 · Agent</p>
+        <h2 class="display" id="village-title">It can act.</h2>
+        <p class="ladder">Looking things up still means waiting to be asked. An <strong>agent</strong> is given a goal
+          and works toward it on its own.</p>
+        <p>Under the hood it's a loop: the model <em>thinks</em> about what to do next, <em>calls a tool</em>, reads the
+          <em>result</em>, and decides again — until the goal is met. Every step is just text going back and forth.</p>
+        <p>Step through the quest. It will make one honest mistake. Block the lane before it sets off and watch it re-plan.</p>
+
+        <p class="sentence-label">The agent's log</p>
+        <ol class="agent-log" id="village-log" aria-live="polite"></ol>
+      </div>
+
+      <div class="chapter-stage">
+        <canvas id="village-canvas" class="scene-canvas island-canvas" aria-label="A small village on a floating island with a search tower, a calculator stall and a map stall. The traveler walks between them to complete a delivery."></canvas>
+        <aside class="panel" aria-label="Village controls">
+          <p class="panel-title">The quest</p>
+          <div class="panel-row">
+            <button class="btn btn-primary" id="village-step" type="button">Start the quest</button>
+            <button class="btn" id="village-reset" type="button">Reset</button>
+          </div>
+          <label class="toggle"><input type="checkbox" id="village-block" /><span>Block the lane <em>(force a re-plan)</em></span></label>
+          <dl class="readouts" id="village-readouts">
+            <div><dt>Step</dt><dd data-readout="step">0</dd></div>
+            <div><dt>Tool calls</dt><dd data-readout="tools">0</dd></div>
+            <div><dt>Thoughts</dt><dd data-readout="loops">0</dd></div>
+          </dl>
+        </aside>
+      </div>
+
+      <details class="under-the-hood">
+        <summary>Under the hood</summary>
+        <div class="uth-body">
+          <h3>LLM + tools + loop + goal</h3>
+          <p>An agent is a language model given a <strong>goal</strong>, a set of <strong>tools</strong> it may call
+            (search, a calculator, a map), and a <strong>loop</strong> that keeps running it. Each tool is described to the
+            model by name, purpose and inputs.</p>
+          <h3>Tool calls are text</h3>
+          <p>The model doesn't run anything itself. It writes a structured <strong>tool call</strong> like
+            <code>search("…")</code>; the surrounding program runs the tool and feeds the <strong>observation</strong> back
+            as more text. Then the model reasons again with that new information.</p>
+          <h3>Stop conditions</h3>
+          <p>The loop ends when the model decides the goal is met — or when a guard stops it: a step limit, a budget,
+            or a human check-in. Without them, agents can loop forever.</p>
+          <h3>Failure modes</h3>
+          <p>Agents pick the wrong tool, trust a stale source (the old map), or wander. Good agents notice
+            contradictions and correct course; good systems log every step so people can see why it did what it did.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="chapter chapter-flip" id="hall" aria-labelledby="hall-title">
+      <div class="chapter-text">
+        <p class="eyebrow">04 · Skill</p>
+        <h2 class="display" id="hall-title">It has<br />know-how.</h2>
+        <p class="ladder">An agent with tools can act, but not necessarily act <em>well</em>. Knowing which tool exists
+          isn't the same as knowing how to do the job.</p>
+        <p>A <strong>skill</strong> is written know-how: a short instruction file for doing one kind of task well. The
+          agent keeps only the titles in mind, and opens the one chapter a task needs — so it stays focused.</p>
+        <p>Give the traveler a task and watch which chapter it opens, and which tools that chapter calls for.</p>
+
+        <p class="sentence-label">What the agent can see</p>
+        <div class="skill-card" id="hall-skill" aria-live="polite"></div>
+      </div>
+
+      <div class="chapter-stage">
+        <canvas id="hall-canvas" class="scene-canvas island-canvas" aria-label="A training hall on a floating island. Tools hang on the wall; a manual on a lectern shows chapter titles, and the traveler opens one."></canvas>
+        <aside class="panel panel-below" aria-label="Hall controls">
+          <p class="panel-title">The task</p>
+          <div class="choices" id="hall-tasks" role="radiogroup" aria-label="Task"></div>
+          <div class="panel-row"><button class="btn btn-primary" id="hall-go" type="button">Give the task</button></div>
+          <dl class="readouts" id="hall-readouts">
+            <div><dt>Context</dt><dd data-readout="context">—</dd></div>
+            <div><dt>Chapters open</dt><dd data-readout="loaded">0 of 4</dd></div>
+            <div><dt>Tools</dt><dd data-readout="tools">—</dd></div>
+          </dl>
+        </aside>
+      </div>
+
+      <details class="under-the-hood">
+        <summary>Under the hood</summary>
+        <div class="uth-body">
+          <h3>Agent Skills</h3>
+          <p>In Claude's <strong>Agent Skills</strong>, a skill is a folder with a <code>SKILL.md</code> file: a short
+            header (<code>name</code>, <code>description</code>) and a body of instructions, plus optional scripts or
+            reference files.</p>
+          <h3>Progressive disclosure</h3>
+          <p>Only each skill's name and description sit in the model's context up front — a few words each. When a task
+            matches, the agent loads that one skill's full body. That keeps the context small even with many skills installed.</p>
+          <h3>Skills vs. tools</h3>
+          <p>A <strong>tool</strong> is something the agent can <em>do</em> (call a calculator, run a search). A
+            <strong>skill</strong> is <em>how</em> to do a task well — and often says which tools to use, in what order.</p>
+          <h3>Skills vs. RAG</h3>
+          <p>RAG retrieves <strong>knowledge</strong> automatically, by similarity to the question. A skill is
+            <strong>know-how</strong> the agent chooses deliberately, by reading the descriptions. Both are just text
+            added to the context — the difference is what it's for and who picks it.</p>
+        </div>
+      </details>
+    </section>
+
   </main>
 
   <div class="fallback-card" id="fallback-card" hidden role="alert">
