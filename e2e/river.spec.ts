@@ -5,6 +5,8 @@ const tokens = (page: Page) => page.locator('[data-readout="tokens"]')
 async function openRiver(page: Page) {
   await page.goto('/')
   await page.locator('#river').scrollIntoViewIfNeeded()
+  // Wait for the 3D scene so steps animate (before it loads, each click steps instantly).
+  await expect(page.locator('#river-canvas[data-ready="true"]')).toBeAttached({ timeout: 30_000 })
   await expect(page.locator('#river-sentence')).toContainText('The traveler lifted the lantern and')
 }
 

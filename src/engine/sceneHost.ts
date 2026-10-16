@@ -27,6 +27,7 @@ export function mountWhenVisible(
       loading = factory().then(
         (h) => {
           handle = h
+          ;(el as HTMLElement).dataset.ready = 'true'
           if (visible) h.start()
         },
         (err: unknown) => {

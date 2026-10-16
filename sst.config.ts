@@ -14,6 +14,12 @@ export default $config({
     // Static site: S3 + CloudFront. No secrets or server code.
     new sst.aws.StaticSite('LanternTrail', {
       build: { command: 'npm run build', output: 'dist' },
+      // Keep the site out of search results: every response says noindex.
+      edge: {
+        viewerResponse: {
+          injection: `event.response.headers['x-robots-tag'] = { value: 'noindex, nofollow' };`,
+        },
+      },
     })
   },
 })
