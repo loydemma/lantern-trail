@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { headLookAngles, loadWarrior } from '../src/world/warrior'
 
 const deg = (d: number) => (d * Math.PI) / 180
-const q = { tier: 'high' as const, reducedMotion: false, pixelRatio: 1 }
+const q = { tier: 'high' as const, reducedMotion: false, pixelRatio: 1, software: false }
 
 describe('headLookAngles', () => {
   it('is neutral at the centre', () => {

@@ -22,8 +22,12 @@ export function setStatus(text: string, state: 'live' | 'paused' | 'unavailable'
   pill.dataset.state = state
 }
 
-export function showFallback(): void {
+export function showFallback(message?: string): void {
   const card = document.getElementById('fallback-card')
-  if (card) card.hidden = false
+  if (card) {
+    card.hidden = false
+    const body = card.querySelector('[data-fallback-text]')
+    if (message && body) body.textContent = message
+  }
   setStatus('UNAVAILABLE', 'unavailable')
 }

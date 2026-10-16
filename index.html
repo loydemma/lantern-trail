@@ -231,9 +231,10 @@
 
   </main>
 
-  <div class="fallback-card" id="fallback-card" hidden role="alert">
+  <div class="fallback-card" id="fallback-card" hidden role="status">
     <p class="panel-title">3D unavailable</p>
-    <p>Your browser couldn't start WebGPU or WebGL, so the scenes are hidden. Everything you need to learn is still in the text.</p>
+    <p data-fallback-text>Your browser couldn't start WebGPU or WebGL, so the scenes are hidden. Everything you need to learn is still in the text, and the controls still work.</p>
+    <button class="btn" type="button" onclick="this.closest('.fallback-card').hidden = true">Got it</button>
   </div>
 
   <footer class="footer">
