@@ -292,9 +292,15 @@ a { color: inherit; }
 
 /* ---------- Mobile ---------- */
 @media (max-width: 720px) {
-  .chapter, .chapter-flip { grid-template-columns: minmax(0, 1fr); }
+  .chapter, .chapter-flip { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .panel-below { margin-inline: 0; }
-  .chapter-stage { order: -1; }
+  /* Phones: heading and intro, then the scene and its controls, then the results. */
+  .chapter-text { display: contents; }
+  .chapter-text > * { order: 0; }
+  .chapter-stage, .chapter-flip .chapter-stage { order: 1; }
+  .chapter-output { order: 2; }
+  .under-the-hood { order: 3; }
+  .chapter-text > p, .chapter-text > h2 { margin-top: 0; margin-bottom: 0; }
   .island-canvas { aspect-ratio: 1 / 1.05; }
   .panel {
     width: auto;

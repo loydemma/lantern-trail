@@ -61,7 +61,7 @@ export async function createArchiveScene(canvas: HTMLCanvasElement, q: Quality):
     scene.add(rack)
     rack.updateMatrixWorld()
 
-    const label = createLabel(TOPIC_NAMES[topic], '', 0.7)
+    const label = createLabel(TOPIC_NAMES[topic], '', 1.1)
     label.position.copy(new Vector3(0, 1.9, 0).applyMatrix4(rack.matrixWorld))
     scene.add(label)
     labels.push(label)
@@ -92,7 +92,7 @@ export async function createArchiveScene(canvas: HTMLCanvasElement, q: Quality):
   tray.position.set(0.2, 0.68, 0.95)
   scene.add(tray)
   const slots = Array.from({ length: CONTEXT_SLOTS }, (_, i) => new Vector3(-0.32 + i * 0.52, 0.73, 0.95))
-  const trayLabel = createLabel('Context', `${CONTEXT_SLOTS} slots`, 0.7)
+  const trayLabel = createLabel('Context', `${CONTEXT_SLOTS} slots`, 0.95)
   trayLabel.position.set(0.2, 1.12, 1.25)
   scene.add(trayLabel)
   labels.push(trayLabel)

@@ -19,10 +19,10 @@ import { labelTexture } from '../../world/label'
 const W = 6.4
 const D = 4.2
 const RIVER_W = 2.6
-const START_X = -2.5
-const STEP_X = 0.82
+const START_X = -2.7
+const STEP_X = 0.95
 const WATER_Y = 0.02
-const stoneRadius = (p: number) => 0.12 + 0.36 * Math.sqrt(p) // footprint area ∝ probability
+const stoneRadius = (p: number) => 0.16 + 0.34 * Math.sqrt(p) // footprint area ∝ probability
 const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
 
 type Stone = { mesh: Group; top: Mesh; label: Mesh; r: number; targetR: number; y: number; targetY: number; z: number; glow: number }
@@ -148,7 +148,7 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
     top.position.y = 0.115
     top.receiveShadow = true
     const label = new Mesh(
-      new PlaneGeometry(0.84, 0.42),
+      new PlaneGeometry(1.2, 0.3),
       new MeshBasicMaterial({ map: labelTexture(text, prob === null ? '' : `${Math.round(prob * 100)}%`), transparent: true, depthWrite: false }),
     )
     label.renderOrder = 10
@@ -176,7 +176,7 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
   // Order candidates so the favourite sits mid-stream and the rest fan out.
   const zFor = (rank: number, n: number) => {
     const slots = [0, -1, 1, -2, 2].slice(0, n)
-    return slots[rank] * (n > 3 ? 0.52 : 0.7)
+    return slots[rank] * (n > 3 ? 0.66 : 0.86)
   }
 
   const showCandidates = (list: Cand[]) => {
@@ -189,7 +189,7 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
       ranked.forEach(({ c, i }, rank) => {
         const s = makeStone(c.text, c.prob, zFor(rank, list.length))
         // Fan into a shallow arc: outer stones sit slightly further ahead.
-        s.mesh.position.x = headX + STEP_X + Math.abs(s.z) * 0.35 + (c.joinsPrevious ? -0.22 : 0)
+        s.mesh.position.x = headX + STEP_X + Math.abs(s.z) * 0.45 + (c.joinsPrevious ? -0.22 : 0)
         byIndex[i] = s
       })
       cands = byIndex
@@ -255,9 +255,12 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
       s.mesh.scale.set(s.r, 1, s.r)
       s.mesh.position.y = s.y + (q.reducedMotion ? 0 : Math.sin(t * 1.3 + s.z * 3) * 0.008)
       s.mesh.position.z = s.z
-      s.label.position.set(s.mesh.position.x, s.mesh.position.y + 0.32, s.z + s.r * 0.6)
+      s.label.position.set(s.mesh.position.x, s.mesh.position.y + 0.5, s.z + s.r * 0.25)
       s.label.quaternion.copy(camera.quaternion)
-      ;(s.label.material as MeshBasicMaterial).opacity = Math.min(1, Math.max(0, (s.y - (WATER_Y - 0.2)) / 0.2))
+      // Fade with height as stones rise/sink; crossed stones dim, and the one underfoot hides.
+      const rise = Math.min(1, Math.max(0, (s.y - (WATER_Y - 0.2)) / 0.2))
+      const crossed = path.includes(s) ? (s === path[path.length - 1] && !walk ? 0 : 0.5) : 1
+      ;(s.label.material as MeshBasicMaterial).opacity = rise * crossed
       ;(s.top.material as MeshStandardMaterial).emissiveIntensity = s.glow * 0.9
     }
     sinking = sinking.filter((s) => {

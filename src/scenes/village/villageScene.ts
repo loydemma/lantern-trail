@@ -56,7 +56,7 @@ export async function createVillageScene(canvas: HTMLCanvasElement, q: Quality):
   const labels: Mesh[] = []
   const signs = new Map<NonNullable<Step['tool']>, MeshStandardMaterial>()
   const sign = (tool: NonNullable<Step['tool']>, text: string, pos: Vector3) => {
-    const l = createLabel(text, 'tool', 0.72)
+    const l = createLabel(text, 'tool', 1.0)
     l.position.copy(pos)
     scene.add(l)
     labels.push(l)

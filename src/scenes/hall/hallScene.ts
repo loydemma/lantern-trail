@@ -94,7 +94,7 @@ export async function createHallScene(canvas: HTMLCanvasElement, q: Quality): Pr
     disc.rotation.x = Math.PI / 2
     disc.position.set(x, 1.0, -1.785)
     scene.add(disc)
-    const label = createLabel(TOOLS[id], '', 0.6)
+    const label = createLabel(TOOLS[id], '', 0.72)
     label.position.set(x, 1.42, -1.6)
     scene.add(label)
     labels.push(label)
@@ -125,7 +125,7 @@ export async function createHallScene(canvas: HTMLCanvasElement, q: Quality): Pr
 
   // Chapter titles float above the book — the only part the agent sees until it picks one.
   const chapters = SKILLS.map((s, i) => {
-    const l = createLabel(s.title, `chapter ${i + 1}`, 0.8)
+    const l = createLabel(s.title, `chapter ${i + 1}`, 0.95)
     l.position.set(0.9 + (i % 2 ? 0.5 : -0.5), 2.6 - Math.floor(i / 2) * 0.38, 0.6)
     scene.add(l)
     labels.push(l)

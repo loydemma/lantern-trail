@@ -46,9 +46,11 @@
         <p>Here, each stone is a possible next piece. Bigger stones are more likely. Thicken the mist to
           make the choices more even, and the path more surprising.</p>
 
-        <p class="sentence-label">The path so far</p>
-        <p class="sentence" id="river-sentence" aria-live="polite"></p>
-        <p class="closing" id="river-closing">It only knows what it saw in training.</p>
+        <div class="chapter-output">
+          <p class="sentence-label">The path so far</p>
+          <p class="sentence" id="river-sentence" aria-live="polite"></p>
+          <p class="closing" id="river-closing">It only knows what it saw in training.</p>
+        </div>
       </div>
 
       <div class="chapter-stage">
@@ -111,7 +113,7 @@
           from them, and can point to its sources.</p>
         <p>Pick a question, then try it with RAG switched off and on.</p>
 
-        <div class="answer-card">
+        <div class="answer-card chapter-output">
           <p class="sentence-label">The archive answers</p>
           <p class="answer" id="archive-answer" aria-live="polite"></p>
           <p class="answer-tag" id="archive-tag"></p>
@@ -168,8 +170,10 @@
           <em>result</em>, and decides again — until the goal is met. Every step is just text going back and forth.</p>
         <p>Step through the quest. It will make one honest mistake. Block the lane before it sets off and watch it re-plan.</p>
 
-        <p class="sentence-label">The agent's log</p>
-        <ol class="agent-log" id="village-log" aria-live="polite"></ol>
+        <div class="chapter-output">
+          <p class="sentence-label">The agent's log</p>
+          <ol class="agent-log" id="village-log" aria-live="polite"></ol>
+        </div>
       </div>
 
       <div class="chapter-stage">
@@ -220,8 +224,10 @@
           agent keeps only the titles in mind, and opens the one chapter a task needs — so it stays focused.</p>
         <p>Give the traveler a task and watch which chapter it opens, and which tools that chapter calls for.</p>
 
-        <p class="sentence-label">What the agent can see</p>
-        <div class="skill-card" id="hall-skill" aria-live="polite"></div>
+        <div class="chapter-output">
+          <p class="sentence-label">What the agent can see</p>
+          <div class="skill-card" id="hall-skill" aria-live="polite"></div>
+        </div>
       </div>
 
       <div class="chapter-stage">
