@@ -1,5 +1,6 @@
 import { QUESTIONS, TABLETS, CONTEXT_SLOTS, retrieve } from './archiveData'
 import type { Question } from './archiveData'
+import { completeWithin } from '../complete'
 
 export type ArchiveView = {
   showRelevance(scores: Record<string, number> | null): void
@@ -20,6 +21,7 @@ export function createArchiveController(root: Document = document) {
   let view: ArchiveView | null = null
   let current: Question = QUESTIONS[0]
   let busy = false
+  let cancel: () => void = () => {}
 
   QUESTIONS.forEach((q, i) => {
     const label = document.createElement('label')
@@ -60,15 +62,19 @@ export function createArchiveController(root: Document = document) {
     setReadouts(ids.length, true)
   }
 
+  // Abandon any retrieval in flight and unlock the button.
+  const abandon = () => {
+    cancel()
+    busy = false
+    ask.disabled = false
+    view?.clear()
+    resetAnswer()
+  }
   list.addEventListener('change', (e) => {
     current = QUESTIONS.find((q) => q.id === (e.target as HTMLInputElement).value) ?? current
-    view?.clear()
-    resetAnswer()
+    abandon()
   })
-  rag.addEventListener('change', () => {
-    view?.clear()
-    resetAnswer()
-  })
+  rag.addEventListener('change', abandon)
   ask.addEventListener('click', () => {
     if (busy) return
     if (!rag.checked) {
@@ -91,8 +97,9 @@ export function createArchiveController(root: Document = document) {
       showGrounded(top)
     }
     if (view) {
-      view.showRelevance(current.scores)
-      view.retrieve(top, finish)
+      const v = view
+      v.showRelevance(current.scores)
+      cancel = completeWithin(4000, (done) => v.retrieve(top, done), finish)
     } else finish()
   })
 

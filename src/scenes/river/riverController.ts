@@ -1,5 +1,6 @@
 import { createRiverState } from './riverState'
 import { TOKEN_SCRIPT } from './tokenScript'
+import { completeWithin } from '../complete'
 
 export type Cand = { text: string; prob: number; joinsPrevious: boolean }
 
@@ -26,6 +27,7 @@ export function createRiverController(root: Document = document) {
   let view: RiverView | null = null
   let temperature = parseFloat(mist.value)
   let lastToken = ''
+  let cancel: () => void = () => {}
 
   const render = () => {
     const full = state.sentence()
@@ -57,10 +59,13 @@ export function createRiverController(root: Document = document) {
       render()
       if (state.isComplete()) view?.complete()
     }
-    if (view) view.animateStep(r.chosen, finish)
-    else finish()
+    if (view) {
+      const v = view
+      cancel = completeWithin(3000, (done) => v.animateStep(r.chosen, done), finish)
+    } else finish()
   })
   resetBtn.addEventListener('click', () => {
+    cancel()
     state.reset()
     lastToken = ''
     view?.reset()

@@ -36,11 +36,12 @@ export const LANE_BLOCKED: Step[] = [
   { kind: 'action', text: 'walk_to("west cottage")', at: 'miller' },
 ]
 
-export const FINISH: Step[] = [
-  { kind: 'observation', text: 'The miller takes the oil and lights the lantern by the door.' },
-  { kind: 'done', text: 'Goal done, so the agent stops. 3 tools used, 1 wrong turn fixed.' },
-]
-
 export function buildRun(blocked: boolean): Step[] {
-  return [...BEFORE_LANE, ...(blocked ? LANE_BLOCKED : LANE_CLEAR), ...FINISH]
+  const steps = [...BEFORE_LANE, ...(blocked ? LANE_BLOCKED : LANE_CLEAR)]
+  const tools = steps.filter((s) => s.tool).length
+  return [
+    ...steps,
+    { kind: 'observation', text: 'The miller takes the oil and lights the lantern by the door.' },
+    { kind: 'done', text: `Goal done, so the agent stops. ${tools} tools used, 1 wrong turn fixed${blocked ? ', 1 re-plan' : ''}.` },
+  ]
 }

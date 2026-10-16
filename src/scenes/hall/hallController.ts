@@ -1,5 +1,6 @@
 import { SKILLS, TASKS, TOOLS, INDEX_WORDS, bodyWords } from './hallData'
 import type { Skill } from './hallData'
+import { completeWithin } from '../complete'
 
 export type HallView = {
   scanTitles(chosen: number, done: () => void): void
@@ -17,6 +18,7 @@ export function createHallController(root: Document = document) {
   let view: HallView | null = null
   let task = TASKS[0]
   let busy = false
+  let cancel: () => void = () => {}
 
   TASKS.forEach((t, i) => {
     const label = document.createElement('label')
@@ -62,6 +64,10 @@ export function createHallController(root: Document = document) {
 
   list.addEventListener('change', (e) => {
     task = TASKS.find((t) => t.id === (e.target as HTMLInputElement).value) ?? task
+    // Abandon any scan in flight and unlock the button.
+    cancel()
+    busy = false
+    go.disabled = false
     view?.reset()
     showIndex()
   })
@@ -78,8 +84,10 @@ export function createHallController(root: Document = document) {
       showSkill(skill)
       view?.useTools(skill.tools)
     }
-    if (view) view.scanTitles(idx, finish)
-    else finish()
+    if (view) {
+      const v = view
+      cancel = completeWithin(4000, (done) => v.scanTitles(idx, done), finish)
+    } else finish()
   })
 
   showIndex()

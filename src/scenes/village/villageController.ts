@@ -1,5 +1,6 @@
 import { buildRun } from './villageData'
 import type { Step, Place } from './villageData'
+import { completeWithin } from '../complete'
 
 export type VillageView = {
   moveTo(place: Place, done: () => void): void
@@ -26,6 +27,7 @@ export function createVillageController(root: Document = document) {
   let i = 0
   let busy = false
   let tools = 0
+  let cancel: () => void = () => {}
 
   const update = () => {
     readout('step').textContent = `${i} / ${run.length}`
@@ -57,10 +59,12 @@ export function createVillageController(root: Document = document) {
     if (s.at && view) {
       busy = true
       update()
-      view.moveTo(s.at, () => { busy = false; update() })
+      const v = view
+      cancel = completeWithin(5000, (done) => v.moveTo(s.at!, done), () => { busy = false; update() })
     } else update()
   })
   reset.addEventListener('click', () => {
+    cancel()
     run = buildRun(block.checked)
     i = 0
     tools = 0

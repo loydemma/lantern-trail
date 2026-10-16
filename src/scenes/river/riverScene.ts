@@ -163,6 +163,20 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
     mat.needsUpdate = true
   }
 
+  // Free a sunk stone's GPU resources (each has its own geometry, top material and label texture).
+  const disposeStone = (s: Stone) => {
+    s.mesh.traverse((o) => {
+      const m = o as Mesh
+      if (!m.isMesh) return
+      m.geometry.dispose()
+      if (m.material !== stoneMat) (m.material as MeshStandardMaterial).dispose()
+    })
+    const lm = s.label.material as MeshBasicMaterial
+    lm.map?.dispose()
+    lm.dispose()
+    s.label.geometry.dispose()
+  }
+
   let path: Stone[] = []
   let cands: Stone[] = []
   let candTexts: string[] = []
@@ -266,7 +280,11 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
       ;(s.top.material as MeshStandardMaterial).emissiveIntensity = s.glow * 0.9
     }
     sinking = sinking.filter((s) => {
-      if (s.y < WATER_Y - 0.35) { scene.remove(s.mesh, s.label); return false }
+      if (s.y < WATER_Y - 0.35) {
+        scene.remove(s.mesh, s.label)
+        disposeStone(s)
+        return false
+      }
       return true
     })
     if (walk) {
