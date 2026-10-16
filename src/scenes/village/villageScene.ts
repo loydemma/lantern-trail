@@ -191,7 +191,7 @@ export async function createVillageScene(canvas: HTMLCanvasElement, q: Quality):
         d()
       }
     }
-    for (const l of labels) l.quaternion.copy(camera.quaternion)
+    for (const l of labels) { l.quaternion.copy(camera.quaternion); l.scale.setScalar(camera.aspect < 1.1 ? 1.3 : 1) }
     warrior?.lookAt(stage.pointer)
     warrior?.update(dt)
   })

@@ -1,5 +1,5 @@
 import { DirectionalLight, HemisphereLight, Vector3 } from 'three/webgpu'
-import { createStage } from './stage'
+import { createStage, fitDistance } from './stage'
 import type { Stage } from './stage'
 import type { Quality } from './quality'
 import { PALETTE } from '../world/palette'
@@ -50,7 +50,8 @@ export async function createIslandStage(
   stage.onFrame((_, t) => {
     lanterns.update(t)
     const sway = q.reducedMotion ? 0 : 1
-    camera.position.set(o.camera.x + pointer.x * 0.35 * sway, o.camera.y + pointer.y * 0.2 * sway, o.camera.z)
+    const cam = fitDistance(camera, o.camera, o.lookAt)
+    camera.position.set(cam.x + pointer.x * 0.35 * sway, cam.y + pointer.y * 0.2 * sway, cam.z)
     camera.lookAt(o.lookAt)
   })
   return { ...stage, pointer }

@@ -2,7 +2,7 @@ import {
   CanvasTexture, CylinderGeometry, DirectionalLight, Group, HemisphereLight, Mesh, MeshBasicMaterial, MeshStandardMaterial,
   PlaneGeometry, Vector3, DoubleSide,
 } from 'three/webgpu'
-import { createStage } from '../../engine/stage'
+import { createStage, fitDistance } from '../../engine/stage'
 import type { Quality } from '../../engine/quality'
 import type { SceneHandle } from '../../engine/sceneHost'
 import type { Cand, RiverView } from './riverController'
@@ -243,6 +243,7 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
   }
   canvas.addEventListener('pointermove', onPointer)
 
+  let followX = 0
   const camBase = new Vector3(0.6, 5.0, 7.4)
   const lookAt = new Vector3(0.1, -0.35, 0.2)
   stage.onFrame((dt, t) => {
@@ -257,6 +258,7 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
       s.mesh.position.z = s.z
       s.label.position.set(s.mesh.position.x, s.mesh.position.y + 0.5, s.z + s.r * 0.25)
       s.label.quaternion.copy(camera.quaternion)
+      s.label.scale.setScalar(camera.aspect < 1.1 ? 1.45 : 1)
       // Fade with height as stones rise/sink; crossed stones dim, and the one underfoot hides.
       const rise = Math.min(1, Math.max(0, (s.y - (WATER_Y - 0.2)) / 0.2))
       const crossed = path.includes(s) ? (s === path[path.length - 1] && !walk ? 0 : 0.5) : 1
@@ -284,8 +286,14 @@ export async function createRiverScene(canvas: HTMLCanvasElement, q: Quality): P
       mat.opacity = mistNow * (1 - i * 0.25)
     })
     const sway = q.reducedMotion ? 0 : 1
-    camera.position.set(camBase.x + pointer.x * 0.35 * sway, camBase.y + pointer.y * 0.2 * sway, camBase.z)
-    camera.lookAt(lookAt)
+    // Narrow canvases (phones): stay close and follow the traveler and the stones ahead,
+    // instead of shrinking the whole island to fit.
+    const narrow = camera.aspect < 1.1
+    followX += ((narrow ? traveler.position.x + 0.9 : 0) - followX) * (1 - Math.exp(-3 * dt))
+    const aim = lookAt.clone().setX(lookAt.x + followX)
+    const cam = fitDistance(camera, camBase.clone().setX(camBase.x + followX), aim, narrow ? 0.6 : 1)
+    camera.position.set(cam.x + pointer.x * 0.35 * sway, cam.y + pointer.y * 0.2 * sway, cam.z)
+    camera.lookAt(aim)
   })
 
   return {

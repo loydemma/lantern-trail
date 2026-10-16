@@ -1,4 +1,4 @@
-import { Color, PerspectiveCamera, Scene, RenderPipeline, PCFShadowMap, NeutralToneMapping, Timer } from 'three/webgpu'
+import { Color, PerspectiveCamera, Vector3, Scene, RenderPipeline, PCFShadowMap, NeutralToneMapping, Timer } from 'three/webgpu'
 import { pass } from 'three/tsl'
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
 import { createRenderer, setStatus } from './renderer'
@@ -70,4 +70,13 @@ export async function createStage(
     resize,
     dispose: () => { ro.disconnect(); renderer.setAnimationLoop(null); renderer.dispose() },
   }
+}
+
+// The dioramas are framed for a ~5:4 canvas. On narrower canvases (phones), pull the camera
+// back along its view line so the whole island width still fits.
+export const DIORAMA_ASPECT = 1.25
+// `strength` > 1 pulls back harder for extra-wide islands; desktop framing is unchanged.
+export function fitDistance(camera: PerspectiveCamera, base: Vector3, target: Vector3, strength = 1): Vector3 {
+  const k = Math.pow(Math.max(1, DIORAMA_ASPECT / camera.aspect), strength)
+  return target.clone().add(base.clone().sub(target).multiplyScalar(k))
 }
