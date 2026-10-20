@@ -1,7 +1,7 @@
 import { Color, PerspectiveCamera, Vector3, Scene, RenderPipeline, PCFShadowMap, NeutralToneMapping, Timer } from 'three/webgpu'
 import { pass } from 'three/tsl'
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
-import { createRenderer, setStatus } from './renderer'
+import { createRenderer } from './renderer'
 import type { Quality } from './quality'
 import type { SceneHandle } from './sceneHost'
 import type { WebGPURenderer } from 'three/webgpu'
@@ -21,8 +21,7 @@ export async function createStage(
   q: Quality,
   opts: { fov?: number; background?: Color; bloom?: { strength: number; radius: number; threshold: number }; exposure?: number } = {},
 ): Promise<Stage> {
-  const { renderer, backend } = await createRenderer(canvas, q)
-  setStatus(backend === 'webgpu' ? 'WEBGPU · LIVE' : 'WEBGL · LIVE')
+  const { renderer } = await createRenderer(canvas, q)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = PCFShadowMap
   renderer.toneMapping = NeutralToneMapping

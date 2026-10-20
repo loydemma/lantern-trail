@@ -66,34 +66,6 @@ a { color: inherit; }
 .masthead h1 { font-size: clamp(56px, 9vw, 120px); }
 .masthead .lede { font-size: 18px; font-weight: 500; line-height: 1.5; margin: 18px 0 0; color: #f6efe2; max-width: 32ch; }
 
-.status-pill {
-  position: absolute;
-  top: clamp(20px, 5vh, 56px);
-  right: var(--gutter);
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  font-weight: 700;
-  padding: 7px 12px 7px 24px;
-  border-radius: 999px;
-  background: rgba(243, 236, 224, 0.14);
-  border: 1px solid rgba(243, 236, 224, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.status-pill::before {
-  content: '';
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  width: 6px;
-  height: 6px;
-  margin-top: -3px;
-  border-radius: 50%;
-  background: var(--lantern);
-  box-shadow: 0 0 8px var(--lantern-glow);
-}
-.status-pill[data-state='unavailable']::before { background: #b9a9a0; box-shadow: none; }
-
 .trail {
   position: absolute;
   left: 50%;
@@ -322,7 +294,6 @@ a { color: inherit; }
     position: relative;
   }
   .trail { gap: 6px; font-size: 11px; letter-spacing: 0.08em; }
-  .status-pill { top: auto; bottom: 16px; right: 16px; }
   .uth-body { columns: 1; }
   .hero-scrim { background: linear-gradient(180deg, rgba(20, 14, 32, 0.6) 0%, rgba(20, 14, 32, 0.3) 40%, rgba(20, 14, 32, 0) 62%); }
 }

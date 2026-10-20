@@ -1,13 +1,12 @@
 import { detectQuality } from './engine/quality'
 import { mountWhenVisible } from './engine/sceneHost'
-import { setStatus, showFallback } from './engine/renderer'
+import { showFallback } from './engine/renderer'
 import { createRiverController } from './scenes/river/riverController'
 import { createArchiveController } from './scenes/archive/archiveController'
 import { createVillageController } from './scenes/village/villageController'
 import { createHallController } from './scenes/hall/hallController'
 
 const q = detectQuality()
-setStatus('LOADING')
 
 // Without GPU acceleration, live 3D freezes the page, so skip the scenes there.
 // The text and controls work on their own.
